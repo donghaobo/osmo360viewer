@@ -1,0 +1,10 @@
+**/build/
+**/.gradle/
+.idea/
+local.properties
+*.iml
+*.apk
+*.aab
+.DS_Store
+# 本机 release 签名（勿提交）；重新生成见 README
+osv-release.keystore

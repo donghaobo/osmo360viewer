@@ -1,0 +1,56 @@
+plugins {
+    id "com.android.application"
+}
+
+def keystoreFile = rootProject.file("osv-release.keystore")
+
+android {
+    namespace "com.osmo.viewer"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.osmo.viewer"
+        minSdk 26
+        targetSdk 35
+        versionCode 28
+        versionName "v0.9.2"
+    }
+
+    signingConfigs {
+        release {
+            if (keystoreFile.exists()) {
+                storeFile keystoreFile
+                storePassword "osvviewer2026"
+                keyAlias "osv"
+                keyPassword "osvviewer2026"
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (keystoreFile.exists()) signingConfig signingConfigs.release
+        }
+        debug {
+            // 与 release 同一套签名：覆盖安装不需要先卸载
+            if (keystoreFile.exists()) signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        resources.excludes += ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"]
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    // SMB2/3：唯一需要第三方库的协议（协议本身太复杂，不适合自己实现）
+    implementation "com.hierynomus:smbj:0.15.0"
+    // FTP：Apache Commons Net（纯 Java，无传递依赖）
+    implementation "commons-net:commons-net:3.11.1"
+}
